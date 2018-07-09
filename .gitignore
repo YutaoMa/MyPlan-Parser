@@ -1,0 +1,8 @@
+# Authentication
+key.py
+
+# Project
+data/
+
+# Python
+__pycache__/
