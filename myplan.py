@@ -4,7 +4,10 @@ import json
 import key
 
 # Initialize
-browser = webdriver.Chrome()
+option = webdriver.ChromeOptions()
+option.set_headless()
+option.add_argument("blink-settings=imagesEnabled=false")
+browser = webdriver.Chrome(options=option)
 browser.implicitly_wait(30)
 
 # Login
@@ -17,16 +20,16 @@ browser.find_element_by_css_selector("input[type='submit']").click()
 # Get majors list
 browser.find_element_by_link_text("Find Courses").click()
 browser.find_element_by_id("seattle-campus-selection").click()
-majors_list = []
+majors_file = open("data/majors.txt", "w")
 majors = browser.find_elements_by_css_selector(".split-column a")
 for major in majors:
-    majors_list.append(major.text)
+    majors_file.write(major.text + "\n")
 
 # Function to parse one major
 def parse_major(major):
     browser.find_element_by_class_name("icon-menu").click()
     browser.find_element_by_link_text("Find Courses").click()
-    browser.find_element_by_link_text(major).click()
+    browser.find_element_by_partial_link_text("(" + major + ")").click()
     major_name = browser.find_element_by_name("searchQuery").get_attribute("value")
     major_name = major_name.replace(" ", "").replace("&", "")
     keep_parsing = True
@@ -48,7 +51,3 @@ def parse_major(major):
             keep_parsing = False
     with open("data/" + major_name + ".json", "w") as major_file:
         json.dump(courses_list, major_file)
-
-# Parse all majors
-for major in majors_list:
-    parse_major(major)
