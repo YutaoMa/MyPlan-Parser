@@ -20,10 +20,12 @@ browser.find_element_by_css_selector("input[type='submit']").click()
 # Get majors list
 browser.find_element_by_link_text("Find Courses").click()
 browser.find_element_by_id("seattle-campus-selection").click()
-majors_file = open("data/majors.txt", "w")
 majors = browser.find_elements_by_css_selector(".split-column a")
+all_major_json = []
 for major in majors:
-    majors_file.write(major.text + "\n")
+    all_major_json.append({'name': major.text})
+with open("data/major/major.json", "w") as all_major_file:
+    json.dump(all_major_json, all_major_file)
 
 # Function to parse one major
 def parse_major(major):
